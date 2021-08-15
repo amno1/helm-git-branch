@@ -52,7 +52,7 @@
   you might loose unsaved changes if this is nil.
 
   Be default, everything is stashed, tracked and untracked data, but not
-  ignored files. Stashing untracked files might not always be desirable, so the
+  ignored files. Stashing untracked files might not always be desirable,
   behaviour so that can also be changed by setting the variable
   /helm-git-branch-stash-unstaged/ to nil.
 
