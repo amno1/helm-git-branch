@@ -46,10 +46,10 @@
   color when there really are no changes sometimes, I think because of some
   temporary files that Emacs creates. Maybe a rule in .gitignore can fix it.
 
-  If there are open buffers with unsaved changes, all changes will be saved
-  prior to stashing. This can be turned off by setting
-  /helm-git-branch-auto-save-on-change/ to nil. Observe that you might loose
-  unsaved changes if this is nil. 
+  If there are open buffers with unsaved changes belonging to git root or
+  subdirectories, all changes will be saved prior to stashing. This can be
+  turned off by setting /helm-git-branch-auto-save-on-change/ to nil. Observe that
+  you might loose unsaved changes if this is nil.
 
   Be default, everything is stashed, tracked and untracked data, but not
   ignored files. Stashing untracked files might not always be desirable, so the
