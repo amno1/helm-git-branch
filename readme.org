@@ -1,0 +1,57 @@
+* News
+
+  <2021-08-15 Sun>
+
+  Initial test.
+
+* About
+
+  This is just a small Emacs Helm application to switch between
+  branches. Imagine if you work on a bigger feature, but need to switch to
+  another branch to fix or lookup something. Usual workflow is to either stash
+  changes, switch to another branch, and upon switching back reaply
+  changes. Alternatively to commit changes, switch, and than when switched back,
+  to reset HEAD^. Currently this little branch switcher implements only stashing
+  strategy. I had plans to implement the commit strategy too, along some other
+  actions like delete branches, pull/merge remote branches and few other small
+  utilities, but it is just to realize that I don't have time to work on
+  this. Currently it does what was my primary goal, the rest will be left for
+  some other times, or as an exercise to an interested reader.
+
+* Requirements
+
+  This builds heavily on [[https://github.com/emacs-helm/helm-ls-git][helm-ls-git]], so you will have to install it first. Also
+  you will need latest Emacs 28.0.50 from the master, and that of late night of
+  14th August. That since [[https://debbugs.gnu.org/cgi/bugreport.cgi?bug=49980;msg=42][Juri Linkow was nice and implemented a feature to
+  save all buffers belonging to a project]] (git root in this case), which I use
+  here. That might be a show stopper for some unfortunately. Maybe I will code
+  something else myself one day, but I guess it is another one on the never ending
+  wish-list.
+
+* Installation
+
+  Install this file somewhere in your Emacs load-path and load it.
+
+* Usage
+
+  There is only one command: /helm-git-branch-local-branches/. Either call it via
+  M-x or bind it to a key.
+
+  Local branches will be shown in usual Helm completion buffer. The current
+  branch will have a '*' and it will be color coded: green if everything is
+  clean and commited, red if there are some changes to commit. Color code is
+  just a visual reminder, that there will be some stashed data. It means nothing
+  more than so. It works only for saved changes, and also seems to show false
+  color when there really are no changes sometimes.
+
+  If there are open buffers with unsaved changes, all changes will be saved
+  prior to stashing. This can be turned off by setting
+  /helm-git-branch-auto-save-on-change/ to nil. Observe that you might loose
+  unsaved changes if this is nil. 
+
+  Be default, everything is stashed, tracked and untracked data, but not
+  ignored files. Stashing untracked files might not always be desirable, so the
+  behaviour so that can also be changed by setting the variable
+  /helm-git-branch-stash-unstaged/ to nil.
+  
+  

@@ -65,6 +65,16 @@ If this option is set to 'commit the changes will automatically commited."
   :type 'string
   :group 'helm)
 
+(defcustom helm-git-branch-auto-save-on-change t
+  ""
+  :type 'boolean
+  :group 'helm)
+
+(defcustom helm-git-branch-auto-stash-unstaged t
+  ""
+  :type 'boolean
+  :group 'helm)
+
 (defcustom helm-git-branch-fuzzy-match nil
   "Enable fuzzy matching in `helm-git-*-branch'."
   :group 'helm-branch-git
@@ -171,9 +181,11 @@ If this option is set to 'commit the changes will automatically commited."
       (with-helm-default-directory it
         (with-output-to-string
           (with-current-buffer standard-output
-            (insert (call-process "git" nil t nil "stash" "save"
-                                  (concat helm-git-branch-stash-prefix
-                                  (helm-ls-git--branch)))))))))
+            (insert
+             (call-process "git" nil t nil "stash" "save"
+                           (when helm-git-branch-auto-stash-unstaged "-u")
+                           (concat helm-git-branch-stash-prefix
+                                   (helm-ls-git--branch)))))))))
 
 (defun helm-git-branch--unstash ()
   (helm-aif (helm-ls-git-root-dir)
@@ -196,6 +208,8 @@ If this option is set to 'commit the changes will automatically commited."
       (with-helm-default-directory it
         (with-output-to-string
           (with-current-buffer standard-output
+            (when helm-git-branch-auto-save-on-change
+              (save-some-buffers t 'save-some-buffers-root))
             (when (helm-git-branch--dirty-p)
               (helm-git-branch--stash))
             (insert (call-process "git" nil t nil "checkout" branch))
