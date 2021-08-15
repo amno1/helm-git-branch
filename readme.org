@@ -1,8 +1,6 @@
-* News
+* Helm-git-branch - a fast switcher branch swithcer
 
-  <2021-08-15 Sun>
-
-  Initial test.
+  for times when you need to quickly switch between two branches.
 
 * About
 
@@ -34,15 +32,17 @@
 
 * Usage
 
-  There is only one command: /helm-git-branch-local-branches/. Either call it via
-  M-x or bind it to a key.
+  There is only one command: /helm-git-branch-local-branches/.
+  
+  Either call it via M-x or bind it to a key.
 
   Local branches will be shown in usual Helm completion buffer. The current
   branch will have a '*' and it will be color coded: green if everything is
   clean and commited, red if there are some changes to commit. Color code is
   just a visual reminder, that there will be some stashed data. It means nothing
   more than so. It works only for saved changes, and also seems to show false
-  color when there really are no changes sometimes.
+  color when there really are no changes sometimes, I think because of some
+  temporary files that Emacs creates. Maybe a rule in .gitignore can fix it.
 
   If there are open buffers with unsaved changes, all changes will be saved
   prior to stashing. This can be turned off by setting
@@ -53,5 +53,41 @@
   ignored files. Stashing untracked files might not always be desirable, so the
   behaviour so that can also be changed by setting the variable
   /helm-git-branch-stash-unstaged/ to nil.
+
+* Caveats
+
+  Use case for this is to be able to quickly switch between branches, when you
+  know you are comming back again to same branch. Easy way to mess things up
+  would be to use this in combination with command line or some other tools. For
+  example switch with this, and then modify files elsewhere, form some other
+  editor, or command line etc, and than switch back again with this tool. This
+  save stash with a certain name, which is than used to search and apply that
+  stash back again. It won't check again to see if everything is aligning, all
+  checksums with blue Moon and Jupiter; it will just apply the sved stash. Of
+  course you can manipulate stuff manually from command line, for example delete
+  the stash, but if you feel need for that, you should know what you are doing.
+
+  There are probably many other ways to mess things up. Switching between
+  multiple branches and than switching back in different order might be an issue
+  too. I haven't tested myself, but I believe that is a good way to mess it up.
   
+* Issues
+
+  Probably many. Please let me know.
   
+* Licence
+
+  Copyright (C) 2020 Arthur Miller
+
+  This program is free software; you can redistribute it and/or modify it under
+  the terms of the GNU General Public License as published by the Free Software
+  Foundation, either version 3 of the License, or (at your option) any later
+  version.
+
+  This program is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+  FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+  details.
+
+  You should have received a copy of the GNU General Public License along with
+  this program. If not, see https://www.gnu.org/licenses/.

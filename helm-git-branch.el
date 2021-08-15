@@ -143,12 +143,11 @@ If this option is set to 'commit the changes will automatically commited."
     (helm-make-actions "Checkout branch"
                        (lambda (_candidate)
                          (let ((marked (helm-marked-candidates)))
-                           (cl-loop for f in marked do
-                                    (progn
-                                      (vc-git-revert f)
-                                      (helm-aif (get-file-buffer f)
-                                          (with-current-buffer it
-                                            (revert-buffer t t))))))))
+                           (dolist (f marked)
+                             (vc-git-revert f)
+                             (helm-aif (get-file-buffer f)
+                                 (with-current-buffer it
+                                   (revert-buffer t t)))))))
     actions))
 
 (defclass helm-git-local-source (helm-source-in-buffer)
