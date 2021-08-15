@@ -82,7 +82,6 @@ If this option is set to 'commit the changes will automatically commited."
          (set var val)
          (setq helm-source-git-local-branches nil))
   :type 'boolean)
-
 
 (defmacro replace-all (from to &optional buffer)
   `(with-current-buffer (or ,buffer (current-buffer))
@@ -120,7 +119,6 @@ If this option is set to 'commit the changes will automatically commited."
   (let ((map (make-sparse-keymap)))
     (set-keymap-parent map helm-buffer-map)
     map))
-
 
 ;;; Sources
 (defun helm-git--local-branches ()
@@ -169,9 +167,7 @@ If this option is set to 'commit the changes will automatically commited."
     :fuzzy-match helm-git-branch-fuzzy-match
     :group 'helm
     :keymap helm-git-branch-map))
-
 
-
 (defun helm-git-branch--dirty-p ()
   (not (string-blank-p (helm-ls-git-status))))
 
@@ -208,12 +204,13 @@ If this option is set to 'commit the changes will automatically commited."
         (with-output-to-string
           (with-current-buffer standard-output
             (when helm-git-branch-auto-save-on-change
-              (save-some-buffers t 'save-some-buffers-root))
+              (save-some-buffers
+               t
+               (lambda () (file-in-directory-p default-directory (helm-ls-git-root-dir)))))
             (when (helm-git-branch--dirty-p)
               (helm-git-branch--stash))
             (insert (call-process "git" nil t nil "checkout" branch))
             (helm-git-branch--unstash))))))
-
 
 ;;; Commands
 ;;;###autoload
