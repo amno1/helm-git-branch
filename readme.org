@@ -52,8 +52,8 @@
   you might loose unsaved changes if this is nil.
 
   Be default, everything is stashed, tracked and untracked data, but not
-  ignored files. Stashing untracked files might not always be desirable,
-  behaviour so that can also be changed by setting the variable
+  ignored files. Stashing untracked files might not always be desirable
+  behaviour, so that can also be changed by setting the variable
   /helm-git-branch-stash-unstaged/ to nil.
 
 * Caveats
@@ -66,11 +66,11 @@
 
   Another way would be to use this in combination with command line or some
   other tools. For  example switch with this, and then modify files elsewhere,
-  form some other editor, or command line etc, and than switch back again with
-  this tool. This saves stash with a certain name, which is than used to search
+  from some other editor, or command line etc, and than switch back again with
+  this tool. This saves a stash with a certain name, which is than used to search
   and apply that stash back again. It won't check again to see if everything is
-  aligning, all checksums with blue Moon and Jupiter; it will just apply the
-  sved stash. Of course you can manipulate stuff manually from command line, for
+  aligning, all checksums and blue Moon and Jupiter; it will just apply the
+  saved stash. Of course you can manipulate stuff manually from command line, for
   example delete the stash, but if you feel need for that, you should know what
   you are doing. 
   
