@@ -22,7 +22,7 @@
 
   This builds heavily on [[https://github.com/emacs-helm/helm-ls-git][helm-ls-git]], so you will have to install it first. Also
   you will need latest Emacs 28.0.50 from the master, and that of late night of
-  14th August. That since [[https://debbugs.gnu.org/cgi/bugreport.cgi?bug=49980;msg=42][Juri Linkow was nice and implemented a feature to
+  13th August 2021. That since [[https://debbugs.gnu.org/cgi/bugreport.cgi?bug=49980;msg=42][Juri Linkow was nice and implemented a feature to
   save all buffers belonging to a project]] (git root in this case), which I use
   here. That might be a show stopper for some unfortunately. Maybe I will code
   something else myself one day, but I guess it is another one on the never ending
