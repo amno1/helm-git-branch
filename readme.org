@@ -30,7 +30,7 @@
 
 * Installation
 
-  Install this file somewhere in your Emacs load-path and load it.
+  Install helm-git-branch.el file somewhere in your Emacs load-path and load it.
 
 * Usage
 
