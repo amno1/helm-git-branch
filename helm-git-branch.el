@@ -3,6 +3,8 @@
 ;; Copyright (C) 2021  Arthur Miller
 
 ;; Author: Arthur Miller <arthur.miller@live.com>
+;; Version: 0.1
+;; Package-Requires: ((helm-ls-git))
 ;; Keywords:
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -168,6 +170,15 @@ If this option is set to 'commit the changes will automatically commited."
     :group 'helm
     :keymap helm-git-branch-map))
 
+(defun helm-git-branch--project-buffers ()
+  "A predicate to check whether the buffer is under the root directory.
+Can be used as a value of `save-some-buffers-default-predicate'
+to save buffers only under the project root or in subdirectories
+of the directory that was default during command invocation."
+  (let ((root (or (helm-ls-git-root-dir)
+                  default-directory)))
+    (lambda () (file-in-directory-p default-directory root))))
+
 (defun helm-git-branch--dirty-p ()
   (not (string-blank-p (helm-ls-git-status))))
 
@@ -204,9 +215,8 @@ If this option is set to 'commit the changes will automatically commited."
         (with-output-to-string
           (with-current-buffer standard-output
             (when helm-git-branch-auto-save-on-change
-              (save-some-buffers
-               t
-               (lambda () (file-in-directory-p default-directory (helm-ls-git-root-dir)))))
+              (save-some-buffers t 'helm-git-branch--save-project-buffers))
+               ;;(lambda () (file-in-directory-p (file-name-directory buffer-file-name) (helm-ls-git-root-dir)))))
             (when (helm-git-branch--dirty-p)
               (helm-git-branch--stash))
             (insert (call-process "git" nil t nil "checkout" branch))
