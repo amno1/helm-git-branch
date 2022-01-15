@@ -26,25 +26,8 @@
 
 ;;; Code:
 
-(require 'helm-ls-git)
-
-(defvar helm-source-git-local-branches nil
-  "This source will built at runtime.
-It can be build explicitly with function
-`helm-git-build-local-branches-source'.")
-
-(defface helm-git-branch-current-clean-face
-    '((t :foreground "#2aa198"))
-  "Files which contain rebase/merge conflicts."
-  :group 'helm-ls-git)
-
-(defface helm-git-branch-current-dirty-face
-    '((t :foreground "#dc322f"))
-  "Files which contain rebase/merge conflicts."
-  :group 'helm-ls-git)
-
-;;; Custom
 
+;;;; Customize
 (defgroup helm-git-branch nil
   "Fast git branch switching with Helm."
   :group 'helm)
@@ -68,12 +51,12 @@ If this option is set to 'commit the changes will automatically commited."
   :group 'helm)
 
 (defcustom helm-git-branch-auto-save-on-change t
-  ""
+  "Save open and modified buffers before performing any git operation."
   :type 'boolean
   :group 'helm)
 
 (defcustom helm-git-branch-auto-stash-unstaged t
-  ""
+  "Automatically stash uncommited changes before switching branches."
   :type 'boolean
   :group 'helm)
 
@@ -85,32 +68,30 @@ If this option is set to 'commit the changes will automatically commited."
          (setq helm-source-git-local-branches nil))
   :type 'boolean)
 
+;;;; Internal
+
+(require 'helm-ls-git)
+
+(defvar helm-source-git-local-branches nil
+  "This source will built at runtime.
+It can be build explicitly with function
+`helm-git-build-local-branches-source'.")
+
+(defface helm-git-branch-current-clean-face
+    '((t :foreground "#2aa198"))
+  "Files which contain rebase/merge conflicts."
+  :group 'helm-ls-git)
+
+(defface helm-git-branch-current-dirty-face
+    '((t :foreground "#dc322f"))
+  "Files which contain rebase/merge conflicts."
+  :group 'helm-ls-git)
+
 (defmacro replace-all (from to &optional buffer)
   `(with-current-buffer (or ,buffer (current-buffer))
      (goto-char (point-min))
      (while (search-forward ,from nil t)
        (replace-match ,to))))
-
-(defun git-make-cmd (git-args &rest cmd-args)
-  (let ((cmd
-         (seq-concatenate
-          'list
-          '(call-process "git" nil t nil) (split-string git-args) cmd-args)))
-    `(lambda () ,cmd)))
-
-(defun git-call (git-args)
-  (funcall (git-make-cmd git-args)))
-
-(defmacro with-helm-git (git-cmd &rest body)
-  `(nbutlast
-     (split-string
-      (helm-aif (helm-ls-git-root-dir)
-          (with-helm-default-directory it
-            (with-output-to-string
-              (with-current-buffer standard-output
-                (insert (format "%s" (git-call ,git-cmd)))
-                ,@body
-                (buffer-string))))) "\n" t "[\s\t]*")))
 
 (defvar helm-git-branch-map
   (let ((map (make-sparse-keymap)))
@@ -122,9 +103,11 @@ If this option is set to 'commit the changes will automatically commited."
     (set-keymap-parent map helm-buffer-map)
     map))
 
-;;; Sources
+;;;; Local branches
 (defun helm-git--local-branches ()
-  (with-helm-git "branch"))
+  (with-temp-buffer
+    (call-process "git" nil t nil "branch")
+    (buffer-string)))
 
 (defun helm-git-branch-local-transformer (candidates _source)
   (cl-loop with root = (helm-ls-git-root-dir)
@@ -149,13 +132,14 @@ If this option is set to 'commit the changes will automatically commited."
                                  (with-current-buffer it
                                    (revert-buffer t t)))))))
     actions))
-
+
 (defclass helm-git-local-source (helm-source-in-buffer)
   ((header-name :initform 'helm-ls-git-header-name)
    (init :initform
          (lambda ()
            (helm-init-candidates-in-buffer 'global
              (helm-git--local-branches))))
+   ;;(candidates :initform 'helm-git--local-branches)
    (keymap :initform 'helm-git-branch-map)
    (action :initform (helm-make-actions "Git checkout"
                                         (lambda (_candidate)
@@ -169,14 +153,13 @@ If this option is set to 'commit the changes will automatically commited."
     :fuzzy-match helm-git-branch-fuzzy-match
     :group 'helm
     :keymap helm-git-branch-map))
-
+
 (defun helm-git-branch--project-buffers ()
   "A predicate to check whether the buffer is under the root directory.
 Can be used as a value of `save-some-buffers-default-predicate'
 to save buffers only under the project root or in subdirectories
 of the directory that was default during command invocation."
-  (let ((root (or (helm-ls-git-root-dir)
-                  default-directory)))
+  (let ((root (or (helm-ls-git-root-dir) default-directory)))
     (lambda () (file-in-directory-p default-directory root))))
 
 (defun helm-git-branch--dirty-p ()
@@ -222,7 +205,15 @@ of the directory that was default during command invocation."
             (insert (call-process "git" nil t nil "checkout" branch))
             (helm-git-branch--unstash))))))
 
-;;; Commands
+;;;; Remote Branches
+(defun helm-git--remote-branches ()
+  (with-temp-buffer
+    (call-process "git" nil t nil "branch")
+    (buffer-string)))
+
+;; todo
+
+;;;; User-visible Commands
 ;;;###autoload
 (defun helm-git-local-branches (&optional arg)
   (interactive "p")
